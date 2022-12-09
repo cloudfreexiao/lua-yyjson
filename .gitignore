@@ -1,0 +1,7 @@
+coverage/
+.libs/
+*.gcda
+*.gcno
+*.profraw
+*.dSYM
+*.so
