@@ -10,7 +10,7 @@
 #include <charconv>
 #include <utility>
 
-namespace moon
+namespace lyyjson
 {
     template<typename ValueType>
     class buffer_iterator
@@ -472,12 +472,12 @@ namespace moon
 
 #ifdef MOON_ENABLE_MIMALLOC
 #include "mimalloc.h"
-namespace moon
+namespace lyyjson
 {
     using buffer = base_buffer<mi_stl_allocator<char>>;
 }
 #else
-namespace moon
+namespace lyyjson
 {
     using buffer = base_buffer<std::allocator<char>>;
 }

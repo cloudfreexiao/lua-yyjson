@@ -1,8 +1,9 @@
-#include "lua.hpp"
-#include "yyjson/yyjson.h"
 #include <string_view>
 #include <charconv>
 #include <codecvt>
+
+#include <lua.hpp>
+#include "yyjson/yyjson.h"
 #include "buffer.hpp"
 
 #ifdef MOON_ENABLE_MIMALLOC
@@ -26,7 +27,7 @@ static const yyjson_alc allocator = { nullptr };
 #endif
 
 using namespace std::literals::string_view_literals;
-using namespace moon;
+using namespace lyyjson;
 
 static constexpr std::string_view json_null = "null"sv;
 static constexpr std::string_view json_true = "true"sv;
@@ -467,7 +468,7 @@ static int concat(lua_State* L)
     {
         size_t size;
         const char* sz = lua_tolstring(L, -1, &size);
-        auto buf = new moon::buffer(size, 16);
+        auto buf = new lyyjson::buffer(size, 16);
         buf->write_back(sz, size);
         lua_pushlightuserdata(L, buf);
         return 1;
@@ -477,7 +478,7 @@ static int concat(lua_State* L)
 
     lua_settop(L, 1);
 
-    auto buf = new moon::buffer(512, 16);
+    auto buf = new lyyjson::buffer(512, 16);
     try
     {
         int array_size = (int)lua_rawlen(L, 1);
@@ -533,7 +534,7 @@ static int concat(lua_State* L)
     return lua_error(L);
 }
 
-static void write_resp(moon::buffer* buf, const char* cmd, size_t size)
+static void write_resp(lyyjson::buffer* buf, const char* cmd, size_t size)
 {
     buf->write_back("\r\n$", 3);
     buf->write_chars(size);
@@ -541,7 +542,7 @@ static void write_resp(moon::buffer* buf, const char* cmd, size_t size)
     buf->write_back(cmd, size);
 }
 
-static void concat_resp_one(moon::buffer* buf, lua_State* L, int i)
+static void concat_resp_one(lyyjson::buffer* buf, lua_State* L, int i)
 {
     int t = lua_type(L, i);
     switch (t)
@@ -613,7 +614,7 @@ static int concat_resp(lua_State* L)
     int n = lua_gettop(L);
     if (0 == n)
         return 0;
-    auto buf = new moon::buffer(512, 16);
+    auto buf = new lyyjson::buffer(512, 16);
     try
     {
         buf->write_back('*');
